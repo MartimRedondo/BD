@@ -1,0 +1,90 @@
+CREATE SCHEMA IF NOT EXISTS Vinha DEFAULT CHARACTER SET utf8 ;
+CREATE DATABASE Vinha;
+USE Vinha ;
+
+DROP DATABASE Vinha; 
+
+CREATE USER 'administrador'@'127.0.0.1' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON Vinha TO 'administrador'@'127.0.0.1' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+CREATE USER 'eng_informatico'@'127.0.0.1' IDENTIFIED BY '0001';
+GRANT SELECT, INSERT, UPDATE, DELETE, ALTER ON Vinha TO 'eng_informatico'@'127.0.0.1';
+GRANT CREATE, DROP, ALTER, INDEX ON Vinha TO 'eng_informatico'@'127.0.0.1';
+FLUSH PRIVILEGES;
+
+SELECT User, Host FROM mysql.user;
+
+CREATE TABLE IF NOT EXISTS Uva (
+  id INT  UNSIGNED NOT NULL,
+  cor VARCHAR(75) NOT NULL,
+  sabor VARCHAR(75) NOT NULL,
+  existeGrainha VARCHAR(1) NOT NULL,
+  acucar DECIMAL(3,2) NOT NULL,
+  acidez VARCHAR(75) NOT NULL,
+  peso DECIMAL(8,2) NOT NULL,
+  PRIMARY KEY (id));
+  
+ CREATE TABLE IF NOT EXISTS Vinho (
+  acidez VARCHAR(75) NOT NULL,
+  pH DECIMAL(2,1) NOT NULL,
+  grau DECIMAL(4,1) NOT NULL,
+  aroma VARCHAR(75) NOT NULL,
+  sabor VARCHAR(75) NOT NULL,
+  recomendacoes VARCHAR(200) NOT NULL,
+  anoProducao INT UNSIGNED NOT NULL,
+  nome VARCHAR(100) NOT NULL,
+  teorAlcoolico DECIMAL(4,2) NOT NULL,
+  id INT UNSIGNED NOT NULL,
+  quantidade DECIMAL(8,2) NOT NULL,
+  preco DECIMAL(8,2) NOT NULL,
+  uva_id INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (uva_id)
+	REFERENCES Uva (id));
+
+
+CREATE TABLE IF NOT EXISTS Zona (
+  codigoGeo INT UNSIGNED NOT NULL,
+  nome VARCHAR(50) NOT NULL,
+  PRIMARY KEY (codigoGeo));
+
+
+CREATE TABLE IF NOT EXISTS Responsavel (
+  nome VARCHAR(200) NOT NULL,
+  PRIMARY KEY (nome));
+
+
+CREATE TABLE IF NOT EXISTS Quinta (
+  id INT UNSIGNED NOT NULL,
+  dimensao DECIMAL(8,2) NOT NULL,
+  Zona_codigoGeo INT UNSIGNED NOT NULL,
+  Vinho_id INT UNSIGNED NOT NULL,
+  Responsavel_nome VARCHAR(200) NOT NULL,
+  Uva_id INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (Zona_codigoGeo)
+    REFERENCES Zona (codigoGeo),
+  FOREIGN KEY (Vinho_id)
+    REFERENCES Vinho (id),
+  FOREIGN KEY (Responsavel_nome)
+    REFERENCES Responsavel (nome),
+  FOREIGN KEY (Uva_id)
+    REFERENCES Uva (id));
+
+CREATE TABLE IF NOT EXISTS Telemovel (
+  telemovel VARCHAR(15) NOT NULL,
+  responsavel VARCHAR(200) NOT NULL,
+  PRIMARY KEY (telemovel),
+	FOREIGN KEY (responsavel)
+    REFERENCES Responsavel (nome));
+    
+
+CREATE TABLE IF NOT EXISTS eMail (
+  eMail VARCHAR(200) NOT NULL,
+  responsavel VARCHAR(200) NOT NULL,
+  PRIMARY KEY (eMail),
+    FOREIGN KEY (responsavel)
+    REFERENCES Responsavel (nome));
+
